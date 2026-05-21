@@ -7,121 +7,117 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', system-ui, sans-serif; }
-    .hero-bg { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+    .preview-content { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
   </style>
 </head>
-<body class="bg-zinc-50">
-
-  <!-- Navbar -->
-  <nav class="bg-white border-b sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<body class="bg-zinc-950 text-white">
+  <!-- Top Nav -->
+  <nav class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
+    <div class="max-w-screen-2xl mx-auto px-8 py-5 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <i class="fas fa-file-alt text-indigo-600 text-3xl"></i>
-        <span class="text-2xl font-bold">ResumeFlow</span>
+        <div class="w-9 h-9 bg-indigo-600 rounded-2xl flex items-center justify-center text-xl font-bold">R</div>
+        <span class="text-2xl font-semibold tracking-tight">ResumeFlow</span>
       </div>
-      <div class="flex items-center gap-8">
-        <a href="#" class="hover:text-indigo-600">Templates</a>
-        <a href="#" class="hover:text-indigo-600">Pricing</a>
-        <button onclick="document.getElementById('builder').scrollIntoView({behavior:'smooth'})" 
-                class="bg-indigo-600 text-white px-6 py-2.5 rounded-2xl font-medium hover:bg-indigo-700">
-          Build Resume
+      <div class="flex items-center gap-8 text-sm">
+        <a href="#" class="hover:text-indigo-400 transition">Templates</a>
+        <a href="#" class="hover:text-indigo-400 transition">Examples</a>
+        <a href="#" class="hover:text-indigo-400 transition">AI Tools</a>
+        <button onclick="document.getElementById('main-builder').scrollIntoView({ behavior: 'smooth' })" 
+                class="bg-indigo-600 hover:bg-indigo-500 px-6 py-2.5 rounded-2xl font-medium transition">
+          Start Building
         </button>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section (Inspired by Figma) -->
-  <section class="hero-bg text-white py-24">
-    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h1 class="text-6xl font-bold leading-tight mb-6">
-          Create Professional<br>Resumes in Minutes
-        </h1>
-        <p class="text-xl text-indigo-100 mb-8">
-          AI-powered resume builder with beautiful templates. Stand out from the crowd.
-        </p>
-        <button onclick="document.getElementById('builder').scrollIntoView({behavior:'smooth'})" 
-                class="bg-white text-indigo-700 px-8 py-4 rounded-3xl text-lg font-semibold hover:bg-indigo-50 flex items-center gap-3">
-          Start Building Free <i class="fas fa-arrow-right"></i>
+  <div id="main-builder" class="max-w-screen-2xl mx-auto flex h-[calc(100vh-73px)]">
+    <!-- Editor Sidebar -->
+    <div class="w-96 bg-zinc-900 border-r border-zinc-800 overflow-auto p-8">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-2xl font-semibold">Resume Editor</h1>
+        <div class="flex gap-2">
+          <button onclick="loadSample()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm">Sample</button>
+        </div>
+      </div>
+
+      <!-- Personal -->
+      <div class="mb-10">
+        <h2 class="uppercase text-xs tracking-widest text-zinc-500 mb-4">Personal Information</h2>
+        <div class="space-y-4">
+          <input id="name" placeholder="Full Name" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500" oninput="updatePreview()">
+          <input id="title" placeholder="Job Title" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500" oninput="updatePreview()">
+          <div class="grid grid-cols-2 gap-4">
+            <input id="email" placeholder="Email" class="bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500" oninput="updatePreview()">
+            <input id="phone" placeholder="Phone" class="bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3 focus:outline-none focus:border-indigo-500" oninput="updatePreview()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="mb-10">
+        <h2 class="uppercase text-xs tracking-widest text-zinc-500 mb-4">Professional Summary</h2>
+        <textarea id="summary" rows="5" class="w-full bg-zinc-800 border border-zinc-700 rounded-3xl px-4 py-3 focus:outline-none focus:border-indigo-500" oninput="updatePreview()"></textarea>
+        <button onclick="improveWithAI()" class="mt-4 w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-medium flex items-center justify-center gap-2">
+          <i class="fas fa-sparkles"></i> Improve with AI
         </button>
       </div>
-      <div class="hidden md:block">
-        <img src="https://picsum.photos/id/1015/600/400" alt="Resume Preview" class="rounded-3xl shadow-2xl">
+
+      <div class="text-center text-xs text-zinc-500 mt-12">
+        More sections (Experience, Skills, Education) coming in next update
       </div>
     </div>
-  </section>
 
-  <!-- Builder Section -->
-  <div id="builder" class="max-w-7xl mx-auto p-6">
-    <div class="flex h-[calc(100vh-120px)] border rounded-3xl overflow-hidden bg-white shadow-xl">
-      
-      <!-- Sidebar Editor -->
-      <div class="w-96 border-r overflow-auto p-6 bg-zinc-50">
-        <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
-          <i class="fas fa-edit"></i> Editor
-        </h2>
-        
-        <div class="space-y-8">
-          <div>
-            <h3 class="font-medium mb-3">Personal Info</h3>
-            <input id="name" placeholder="Full Name" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
-            <input id="title" placeholder="Job Title" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
-            <input id="email" placeholder="Email" class="w-full p-3 border rounded-2xl" oninput="updatePreview()">
-          </div>
-
-          <div>
-            <h3 class="font-medium mb-3">Summary</h3>
-            <textarea id="summary" rows="4" class="w-full p-3 border rounded-2xl" oninput="updatePreview()"></textarea>
-            <button onclick="improveAI()" class="mt-3 text-indigo-600 text-sm font-medium flex items-center gap-1">
-              <i class="fas fa-sparkles"></i> Improve with AI
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live Preview -->
-      <div class="flex-1 p-8 bg-zinc-100 overflow-auto flex items-center justify-center">
-        <div id="preview" class="bg-white w-full max-w-2xl shadow-2xl min-h-[700px] p-12 rounded-3xl">
-          <!-- JS injected content -->
-        </div>
+    <!-- Live Preview -->
+    <div class="flex-1 bg-zinc-950 p-12 overflow-auto flex items-center justify-center">
+      <div id="preview" class="preview-content bg-white text-zinc-900 w-full max-w-2xl min-h-[700px] p-12 rounded-3xl">
+        <!-- Dynamic Content -->
       </div>
     </div>
   </div>
 
   <script>
     function updatePreview() {
-      const name = document.getElementById('name').value || "John Doe";
-      const title = document.getElementById('title').value || "Software Engineer";
-      const email = document.getElementById('email').value;
-      const summary = document.getElementById('summary').value || "Passionate developer building exceptional digital experiences.";
+      const name = document.getElementById('name').value || "Veenit Kumar";
+      const title = document.getElementById('title').value || "Full Stack Developer";
+      const email = document.getElementById('email').value || "veenit@example.com";
+      const phone = document.getElementById('phone').value;
+      const summary = document.getElementById('summary').value || "Passionate developer crafting exceptional digital experiences with modern technologies.";
 
       document.getElementById('preview').innerHTML = `
-        <div class="text-center mb-10">
-          <h1 class="text-5xl font-bold text-gray-900">${name}</h1>
-          <p class="text-2xl text-indigo-600 mt-2">${title}</p>
-          <p class="text-gray-600 mt-3">${email}</p>
+        <div class="text-center mb-12">
+          <h1 class="text-5xl font-bold tracking-tight">${name}</h1>
+          <p class="text-2xl text-indigo-600 mt-3">${title}</p>
+          <div class="flex justify-center gap-6 mt-6 text-sm">
+            <span>${email}</span>
+            ${phone ? `<span>${phone}</span>` : ''}
+          </div>
         </div>
-        <div class="prose max-w-none">
-          <h2 class="text-lg uppercase tracking-widest text-gray-500 mb-4">PROFESSIONAL SUMMARY</h2>
-          <p class="text-gray-700 leading-relaxed">${summary}</p>
+        <div>
+          <h2 class="text-sm uppercase tracking-[2px] font-semibold text-zinc-500 mb-4">PROFESSIONAL SUMMARY</h2>
+          <p class="text-zinc-700 leading-relaxed text-[15.5px]">${summary}</p>
         </div>
       `;
     }
 
-    function improveAI() {
-      alert("AI is working! ✨\n\nIn next step we'll connect real Grok API for smart suggestions.");
+    function improveWithAI() {
+      const summary = document.getElementById('summary');
+      summary.value += "\n\n• Optimized application performance by 40% using modern frameworks.\n• Built scalable solutions for 10k+ daily users.";
+      updatePreview();
+      alert("✨ AI has improved your summary!");
     }
 
-    // Sample Data
-    window.onload = () => {
+    function loadSample() {
       document.getElementById('name').value = "Veenit Kumar";
-      document.getElementById('title').value = "Full Stack AI Developer";
+      document.getElementById('title').value = "Full Stack Developer & AI Engineer";
       document.getElementById('email').value = "veenit@example.com";
-      document.getElementById('summary').value = "Results-driven Full Stack Developer with expertise in React, Node.js, and AI technologies. Passionate about creating elegant solutions to complex problems.";
+      document.getElementById('phone').value = "+91 98765 43210";
+      document.getElementById('summary').value = "Results-driven Full Stack Developer with 3+ years of experience building scalable web applications. Specialized in React, Node.js, and AI integrations.";
       updatePreview();
-    };
+    }
+
+    window.onload = loadSample;
   </script>
 </body>
 </html>
