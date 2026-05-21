@@ -12,7 +12,7 @@
     .resume-preview { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
     @media print {
       .no-print { display: none !important; }
-      .resume-preview { box-shadow: none; margin: 0; width: 100%; }
+      .resume-preview { box-shadow: none; margin: 0; width: 100%; max-width: 100%; }
     }
   </style>
 </head>
@@ -20,15 +20,13 @@
   <div class="max-w-7xl mx-auto">
     <div class="bg-white border-b sticky top-0 z-50 no-print">
       <div class="px-8 py-4 flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <i class="fas fa-robot text-blue-600"></i> AI Resume Builder
-        </h1>
+        <h1 class="text-3xl font-bold text-gray-900">AI Resume Builder</h1>
         <div class="flex gap-3">
-          <button onclick="loadSampleData()" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-2xl font-medium flex items-center gap-2">
+          <button onclick="loadSampleData()" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-2xl flex items-center gap-2">
             <i class="fas fa-magic"></i> Sample
           </button>
-          <button onclick="exportPDF()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold flex items-center gap-2">
-            <i class="fas fa-download"></i> Export PDF
+          <button onclick="exportPDF()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl flex items-center gap-2">
+            <i class="fas fa-download"></i> PDF
           </button>
         </div>
       </div>
@@ -36,89 +34,169 @@
 
     <div class="flex h-[calc(100vh-73px)]">
       <!-- Editor -->
-      <div class="w-96 bg-white border-r overflow-auto p-6 space-y-8 no-print">
-        <h2 class="text-2xl font-semibold">Editor</h2>
-
-        <div class="space-y-8">
-          <!-- Personal -->
-          <div>
-            <h3 class="font-medium mb-3">Personal Information</h3>
-            <input id="name" placeholder="Full Name" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
-            <input id="title" placeholder="Job Title" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
-            <input id="email" placeholder="Email" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
-            <input id="phone" placeholder="Phone" class="w-full p-3 border rounded-2xl" oninput="updatePreview()">
-          </div>
-
-          <!-- Summary -->
-          <div>
-            <h3 class="font-medium mb-2">Professional Summary</h3>
-            <textarea id="summary" rows="4" class="w-full p-3 border rounded-2xl" oninput="updatePreview()"></textarea>
-            <button onclick="improveWithAI('summary')" class="mt-2 text-blue-600 text-sm hover:underline">✨ AI Improve</button>
-          </div>
-
-          <!-- Experience, Education, Skills coming soon in next update -->
-          <div class="pt-6 border-t text-center text-gray-500 text-sm">
-            Full drag & drop + Education + Skills + Projects + Multiple Templates in next phase.
-          </div>
+      <div class="w-96 bg-white border-r overflow-auto p-6 no-print">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-semibold">Editor</h2>
+          <select id="template-select" onchange="switchTemplate()" class="border rounded-xl p-2">
+            <option value="classic">Classic</option>
+            <option value="modern">Modern</option>
+            <option value="compact">Compact</option>
+          </select>
         </div>
+
+        <!-- Personal Info -->
+        <div class="space-y-4 mb-8">
+          <h3 class="font-medium">Personal Information</h3>
+          <input id="name" class="w-full p-3 border rounded-2xl" placeholder="Full Name" oninput="updatePreview()">
+          <input id="title" class="w-full p-3 border rounded-2xl" placeholder="Job Title" oninput="updatePreview()">
+          <input id="email" class="w-full p-3 border rounded-2xl" placeholder="Email" oninput="updatePreview()">
+          <input id="phone" class="w-full p-3 border rounded-2xl" placeholder="Phone" oninput="updatePreview()">
+        </div>
+
+        <!-- Summary -->
+        <div class="mb-8">
+          <h3 class="font-medium mb-2">Professional Summary</h3>
+          <textarea id="summary" rows="4" class="w-full p-3 border rounded-2xl" oninput="updatePreview()"></textarea>
+          <button onclick="improveWithAI()" class="text-blue-600 text-sm mt-2">✨ Improve with AI</button>
+        </div>
+
+        <!-- Experience -->
+        <div class="mb-8">
+          <div class="flex justify-between mb-3">
+            <h3 class="font-medium">Experience</h3>
+            <button onclick="addExperience()" class="text-blue-600"><i class="fas fa-plus"></i></button>
+          </div>
+          <div id="exp-list" class="space-y-3"></div>
+        </div>
+
+        <button onclick="addMoreSections()" class="w-full py-3 border-2 border-dashed border-gray-300 rounded-2xl text-gray-500 hover:border-blue-300">
+          + Add Education / Skills / Projects
+        </button>
       </div>
 
       <!-- Preview -->
-      <div class="flex-1 p-8 bg-gray-100 overflow-auto flex items-start justify-center">
-        <div id="preview" class="resume-preview bg-white w-full max-w-2xl p-10">
-          <div class="text-center border-b pb-8 mb-8">
-            <h1 id="preview-name" class="text-4xl font-bold"></h1>
-            <p id="preview-title" class="text-xl text-gray-600 mt-1"></p>
-            <div class="flex justify-center gap-6 mt-4 text-gray-600 text-sm">
-              <span id="preview-email"></span>
-              <span id="preview-phone"></span>
-            </div>
-          </div>
-          <div id="preview-summary-section"></div>
+      <div class="flex-1 p-8 bg-gray-100 overflow-auto">
+        <div id="preview" class="resume-preview bg-white w-full max-w-2xl mx-auto p-10 min-h-[1100px]">
+          <!-- Content injected by JS -->
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    let experiences = [];
+    let currentTemplate = 'classic';
+
     function updatePreview() {
-      document.getElementById('preview-name').textContent = document.getElementById('name').value || "Your Name";
-      document.getElementById('preview-title').textContent = document.getElementById('title').value || "";
-      document.getElementById('preview-email').textContent = document.getElementById('email').value;
-      document.getElementById('preview-phone').textContent = document.getElementById('phone').value;
+      let html = `
+        <div class="text-center border-b pb-8 mb-8">
+          <h1 class="text-4xl font-bold text-gray-900">${document.getElementById('name').value || 'Your Name'}</h1>
+          <p class="text-xl text-gray-600 mt-1">${document.getElementById('title').value || 'Professional Title'}</p>
+          <div class="flex justify-center gap-6 mt-4 text-sm text-gray-600">
+            <span>${document.getElementById('email').value}</span>
+            <span>${document.getElementById('phone').value}</span>
+          </div>
+        </div>
 
-      const summary = document.getElementById('summary').value;
-      document.getElementById('preview-summary-section').innerHTML = summary ? `
-        <h2 class="uppercase text-xs tracking-widest font-semibold text-gray-500 mb-3">PROFESSIONAL SUMMARY</h2>
-        <p class="text-gray-700 leading-relaxed">${summary}</p>
-      ` : '';
+        <div class="mb-8">
+          <h2 class="uppercase tracking-widest text-xs font-semibold text-gray-500 mb-3">PROFESSIONAL SUMMARY</h2>
+          <p class="text-gray-700">${document.getElementById('summary').value || ''}</p>
+        </div>
 
+        <div>
+          <h2 class="uppercase tracking-widest text-xs font-semibold text-gray-500 mb-4">EXPERIENCE</h2>
+      `;
+
+      experiences.forEach(exp => {
+        html += `
+          <div class="mb-6">
+            <div class="flex justify-between">
+              <h3 class="font-semibold">${exp.role}</h3>
+              <span class="text-gray-500">${exp.period}</span>
+            </div>
+            <p class="text-gray-600">${exp.company}</p>
+            <ul class="mt-2 list-disc ml-5 text-gray-700">
+              ${exp.bullets.map(b => `<li>${b}</li>`).join('')}
+            </ul>
+          </div>`;
+      });
+
+      html += `</div>`;
+      document.getElementById('preview').innerHTML = html;
+
+      // Auto-save
       localStorage.setItem("resumeData", JSON.stringify({
         name: document.getElementById('name').value,
         title: document.getElementById('title').value,
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
-        summary: summary
+        summary: document.getElementById('summary').value,
+        experiences
       }));
     }
 
-    function improveWithAI(section) {
-      alert("🔥 AI Feature Activated!\n\nGrok / OpenAI integration ready. In production we can connect real API for bullet points, summary, etc.");
+    function addExperience() {
+      const role = prompt("Job Role:") || "Software Developer";
+      const company = prompt("Company:") || "Tech Company";
+      const period = prompt("Period (e.g. 2023-Present):") || "2023 - Present";
+      const bullet = prompt("Achievement/Bullet:") || "Developed scalable applications";
+
+      experiences.push({ role, company, period, bullets: [bullet] });
+      renderExpList();
+      updatePreview();
+    }
+
+    function renderExpList() {
+      const container = document.getElementById('exp-list');
+      container.innerHTML = experiences.map((exp, i) => `
+        <div class="bg-gray-50 p-4 rounded-2xl">
+          <strong>${exp.role}</strong> @ ${exp.company} <span class="text-xs text-gray-500">(${exp.period})</span>
+          <button onclick="removeExp(${i})" class="text-red-600 text-xs float-right">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function removeExp(i) {
+      experiences.splice(i, 1);
+      renderExpList();
+      updatePreview();
+    }
+
+    function improveWithAI() {
+      alert("✅ AI Powered!\n\nConnect Grok API or OpenAI in future for real bullet improvement and optimization.");
     }
 
     function loadSampleData() {
       document.getElementById('name').value = "Veenit Kumar";
       document.getElementById('title').value = "Full Stack Developer & AI Engineer";
-      document.getElementById('email').value = "veenit@proton.me";
+      document.getElementById('email').value = "veenit@example.com";
       document.getElementById('phone').value = "+91 98765 43210";
-      document.getElementById('summary').value = "Results-driven Full Stack Developer with strong expertise in modern web technologies and AI/ML integration. Passionate about building scalable, user-centric applications that solve real-world problems.";
+      document.getElementById('summary').value = "Passionate full-stack developer specializing in modern web technologies and AI integration.";
+
+      experiences = [
+        { role: "Senior Full Stack Developer", company: "TechCorp", period: "2023 - Present", bullets: ["Built customer platform", "Improved performance by 60%"] },
+        { role: "Software Engineer", company: "StartupX", period: "2022 - 2023", bullets: ["Developed MVP from scratch"] }
+      ];
+
+      renderExpList();
       updatePreview();
+    }
+
+    function switchTemplate() {
+      currentTemplate = document.getElementById('template-select').value;
+      updatePreview();
+      alert("Template switched to " + currentTemplate + " (more visual changes coming soon)");
     }
 
     function exportPDF() {
       window.print();
     }
 
+    function addMoreSections() {
+      alert("Education, Skills & Projects sections coming in next update!");
+    }
+
+    // Load data
     window.onload = () => {
       const saved = localStorage.getItem("resumeData");
       if (saved) {
@@ -128,7 +206,9 @@
         document.getElementById('email').value = d.email || '';
         document.getElementById('phone').value = d.phone || '';
         document.getElementById('summary').value = d.summary || '';
+        if (d.experiences) experiences = d.experiences;
       }
+      renderExpList();
       updatePreview();
     };
   </script>
