@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Resume Builder - Veenit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .resume-preview { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
+    @media print {
+      .no-print { display: none !important; }
+      .resume-preview { box-shadow: none; margin: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-white border-b sticky top-0 z-50 no-print">
+      <div class="px-8 py-4 flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <i class="fas fa-file-alt text-blue-600"></i> AI Resume Builder
+        </h1>
+        <div class="flex gap-3">
+          <button onclick="loadSampleData()" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-2xl font-medium flex items-center gap-2 transition">
+            <i class="fas fa-magic"></i> Sample Data
+          </button>
+          <button onclick="exportPDF()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-semibold flex items-center gap-2 transition">
+            <i class="fas fa-download"></i> Export PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex h-[calc(100vh-73px)]">
+      <!-- Editor -->
+      <div class="w-96 bg-white border-r overflow-auto p-6 space-y-8 no-print">
+        <h2 class="text-2xl font-semibold">Editor</h2>
+        
+        <div class="space-y-6">
+          <div>
+            <h3 class="font-medium mb-2">Personal Info</h3>
+            <input id="name" placeholder="Full Name" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
+            <input id="title" placeholder="Job Title" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
+            <input id="email" placeholder="Email" class="w-full p-3 border rounded-2xl mb-3" oninput="updatePreview()">
+            <input id="phone" placeholder="Phone" class="w-full p-3 border rounded-2xl" oninput="updatePreview()">
+          </div>
+
+          <div>
+            <h3 class="font-medium mb-2">Professional Summary</h3>
+            <textarea id="summary" rows="5" class="w-full p-3 border rounded-2xl" oninput="updatePreview()" placeholder="Write a strong summary..."></textarea>
+            <button onclick="improveWithAI()" class="mt-2 text-blue-600 text-sm hover:underline flex items-center gap-1">
+              <i class="fas fa-sparkles"></i> Improve with AI
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="flex-1 p-8 bg-gray-100 overflow-auto flex items-start justify-center">
+        <div id="preview" class="resume-preview bg-white w-full max-w-2xl p-10">
+          <div class="text-center border-b pb-8 mb-8">
+            <h1 id="preview-name" class="text-4xl font-bold">Your Name</h1>
+            <p id="preview-title" class="text-xl text-gray-600 mt-1"></p>
+            <div class="flex justify-center gap-6 mt-4 text-sm text-gray-600">
+              <span id="preview-email"></span>
+              <span id="preview-phone"></span>
+            </div>
+          </div>
+          <div>
+            <h2 class="text-xs uppercase tracking-widest font-semibold text-gray-500 mb-3">PROFESSIONAL SUMMARY</h2>
+            <p id="preview-summary" class="text-gray-700 leading-relaxed"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updatePreview() {
+      document.getElementById('preview-name').textContent = document.getElementById('name').value || "Your Name";
+      document.getElementById('preview-title').textContent = document.getElementById('title').value || "";
+      document.getElementById('preview-email').textContent = document.getElementById('email').value;
+      document.getElementById('preview-phone').textContent = document.getElementById('phone').value;
+      document.getElementById('preview-summary').textContent = document.getElementById('summary').value || "";
+      
+      localStorage.setItem("resumeData", JSON.stringify({
+        name: document.getElementById('name').value,
+        title: document.getElementById('title').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        summary: document.getElementById('summary').value
+      }));
+    }
+
+    function loadSampleData() {
+      document.getElementById('name').value = "Veenit Kumar";
+      document.getElementById('title').value = "Full Stack Developer & AI Engineer";
+      document.getElementById('email').value = "veenit@example.com";
+      document.getElementById('phone').value = "+91 98765 43210";
+      document.getElementById('summary').value = "Results-driven Full Stack Developer with 3+ years of experience in building scalable web applications using modern technologies. Passionate about AI and machine learning integration. Proven ability to deliver high-quality solutions that drive business growth.";
+      updatePreview();
+    }
+
+    function improveWithAI() {
+      alert("AI Improvement (Grok/OpenAI) will be integrated in next update!");
+      // Future AI call will go here
+    }
+
+    function exportPDF() {
+      window.print();
+    }
+
+    window.onload = () => {
+      const saved = localStorage.getItem("resumeData");
+      if (saved) {
+        const d = JSON.parse(saved);
+        document.getElementById('name').value = d.name || '';
+        document.getElementById('title').value = d.title || '';
+        document.getElementById('email').value = d.email || '';
+        document.getElementById('phone').value = d.phone || '';
+        document.getElementById('summary').value = d.summary || '';
+      }
+      updatePreview();
+    };
+  </script>
+</body>
+</html>
